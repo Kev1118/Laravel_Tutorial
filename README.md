@@ -1,8 +1,15 @@
 <h1>Instruction</h1>
 -   clone the project
--   run composer update
--   run npm run dev
--   run php artisan db:seed --class=UserSeeder # FOR USER/POST/FOLLOWS TABLE DATA
+-   run "composer update"
+-   run "npm run dev"
+-   run "php artisan db:seed --class=UserSeeder" # FOR USER/POST/FOLLOWS TABLE DATA
+-   Edit 1 user in user table isAdmin column to 1 for admin accouunt
+
+<h1 style="color: red">NOTE:</h1>
+-   run php "artisan queue:work" for email sending
+-   run php "artisan schedule:work" for schule task email sending 
+
+
 
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 

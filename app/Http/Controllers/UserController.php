@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Events\OurExampleEvent;
 use Illuminate\Http\Request;
 use App\Models\Follow;
+use App\Models\Post;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 use Illuminate\Validation\Rule;
@@ -61,11 +63,18 @@ class UserController extends Controller
         ]);
     }
 
+    public function profileRaw(User $user){
+        return response()->json(['theHTML' => view('profile-post-only', ['posts' => $user->posts()->latest()->get()])->render(), 'docTitle' => $user->username . "'s Profile"]);
+    }
+
     public function profileFollowing(User $user){
         $this->getSharedData($user);
         return view('profile-following',[
             'following' => $user->followingTheseUsers()->latest()->get()
         ]);
+    }
+    public function profileFollowingRaw(User $user){
+        return response()->json(['theHTML' => view('profile-following-only', ['following' => $user->followingTheseUsers()->latest()->get()])->render(), 'docTitle' => 'Who ' . $user->username . " follows"]);
     }
 
     public function profileFollowers(User $user){
@@ -76,11 +85,26 @@ class UserController extends Controller
         ]);
     }
 
+    public function profileFollowersRaw(User $user){
+        return response()->json(['theHTML' => view('profile-followers-only', ['followers' => $user->followers()->latest()->get()])->render(), 'docTitle' => $user->username . "'s followers"]);
+
+    }
+
     public function showCorrectHomepage(){
        if(auth()->check()){
         return view('homepage-feed', ['posts' => auth()->user()->feedPosts()->latest()->paginate(4)]);
        }else{
-        return view('homepage');
+        $postCount = Cache::remember('postCount', 20 ,function (){
+            // sleep(5);
+            return Post::count();
+        });
+        // if(Cache::has('postCount')){
+        //     $postCount = Cache::get('postCount');
+        // }else{
+        //     $postCount = Post::count();
+        //     Cache::put('postCount', $postCount, 20);
+        // }
+        return view('homepage', ['postCount' => $postCount]);
        }
     }
 
